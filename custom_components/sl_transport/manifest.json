@@ -7,6 +7,6 @@
   "codeowners": ["@mullweisser"],
   "requirements": ["aiohttp>=3.9.0"],
   "iot_class": "cloud_polling",
-  "integration_type": "service",
+  "integration_type": "hub",
   "quality_scale": "bronze"
 }
