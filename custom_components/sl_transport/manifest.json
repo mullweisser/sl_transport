@@ -1,0 +1,12 @@
+{
+  "domain": "sl_transport",
+  "name": "SL Transport (Stockholm Public Transport)",
+  "version": "0.1.0",
+  "documentation": "https://github.com/mullweisser/sl_transport",
+  "dependencies": [],
+  "codeowners": ["@mullweisser"],
+  "requirements": ["aiohttp>=3.9.0"],
+  "iot_class": "cloud_polling",
+  "integration_type": "service",
+  "quality_scale": "bronze"
+}
