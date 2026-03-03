@@ -9,7 +9,7 @@ Custom HACS integration for SL (Stockholm) public transport using official key-l
 
 ## Installation
 1. HACS → Integrations → 3-dots → Custom repositories
-2. Add: https://github.com/YOURUSERNAME/sl_transport  Category: Integration
+2. Add: https://github.com/mullweisser/sl_transport  Category: Integration
 3. Search & install "SL Transport"
 4. Restart HA
 5. Settings → Devices & services → Add Integration → SL Transport
