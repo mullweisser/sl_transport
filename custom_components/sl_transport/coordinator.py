@@ -41,21 +41,59 @@ class SLCoordinator(DataUpdateCoordinator):
             "type_destination": "any",
             "calc_number_of_trips": 1,
         }
+        origin = self.config_data["origin"]
+        destination = self.config_data["destination"]
+        base_result = {"duration": None, "origin": origin, "destination": destination, "interchanges": None}
+
         async with self.session.get(url, params=params, timeout=aiohttp.ClientTimeout(total=15)) as resp:
             if resp.status != 200:
+                _LOGGER.warning(
+                    "Journey Planner API returned HTTP %s for '%s' → '%s'",
+                    resp.status, origin, destination,
+                )
                 raise Exception(f"HTTP {resp.status}")
-            data = await resp.json()
-            # Journey Planner v2 returns "journeys" with "tripDuration" in seconds
-            journeys = data.get("journeys") or data.get("trips") or []
+
+            # content_type=None skips strict Content-Type validation so we can parse
+            # the body regardless of how the server advertises it (avoids ContentTypeError).
+            try:
+                data = await resp.json(content_type=None)
+            except Exception as exc:
+                _LOGGER.warning("Could not parse Journey Planner response: %s", exc)
+                return base_result
+
+            _LOGGER.debug("Journey Planner raw response keys: %s", list(data.keys()) if isinstance(data, dict) else type(data))
+
+            # The API key varies by version: "journeys" (v2 JSON), "trips", or "Trip" (Hafas XML→JSON).
+            journeys = data.get("journeys") or data.get("trips") or data.get("Trip") or []
             if not journeys:
-                return {"duration": None, "origin": self.config_data["origin"], "destination": self.config_data["destination"]}
+                _LOGGER.debug("No journeys found for '%s' → '%s'", origin, destination)
+                return base_result
+
             journey = journeys[0]
+
+            # "tripDuration" / "duration" are in seconds (v2 JSON format).
+            # "dur" is in minutes (Hafas XML-to-JSON format).
             duration_secs = journey.get("tripDuration") or journey.get("duration")
+            duration_min = journey.get("dur")
+
+            if duration_secs is not None:
+                try:
+                    minutes = int(duration_secs) // 60
+                except (TypeError, ValueError):
+                    minutes = None
+            elif duration_min is not None:
+                try:
+                    minutes = int(duration_min)
+                except (TypeError, ValueError):
+                    minutes = None
+            else:
+                minutes = None
+
             return {
-                "duration": duration_secs // 60 if duration_secs is not None else None,
-                "origin": self.config_data["origin"],
-                "destination": self.config_data["destination"],
-                "interchanges": journey.get("interchanges"),
+                "duration": minutes,
+                "origin": origin,
+                "destination": destination,
+                "interchanges": journey.get("interchanges") or journey.get("chg"),
             }
 
     async def _fetch_disruptions(self):
