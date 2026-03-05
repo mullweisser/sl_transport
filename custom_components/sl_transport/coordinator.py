@@ -92,15 +92,8 @@ class SLCoordinator(DataUpdateCoordinator):
                 raise Exception(f"HTTP {resp.status}")
             data = await resp.json()
             departures = data.get("departures", [])
-            next_dep = departures[0] if departures else {}
             result = {
-                # Correct field names per SL Transport API spec
-                "next_time": next_dep.get("expected") or next_dep.get("scheduled"),
-                "display": next_dep.get("display"),
-                "line": next_dep.get("line", {}).get("designation"),
-                "transport_mode": next_dep.get("line", {}).get("transport_mode"),
-                "dest": next_dep.get("destination"),
-                "departures": departures[:8],
+                "departures": departures,
                 "deviations": [],
                 "deviation_count": 0,
             }
