@@ -11,4 +11,5 @@ TYPE_TRAVEL_TIME = "travel_time"
 TYPE_DISRUPTIONS = "disruptions"
 TYPE_DEPARTURES = "departures"
 
-DEFAULT_POLL = 300
+DEFAULT_POLL = 60            # 1 minute in seconds
+DEFAULT_POLL_MINUTES = 1    # default shown in config forms

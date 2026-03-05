@@ -14,29 +14,55 @@
         "data": {
           "origin": "Origin stop",
           "destination": "Destination stop",
-          "name": "Name (optional)"
+          "name": "Name (optional)",
+          "poll_interval": "Polling interval (minutes)"
         }
       },
       "departures": {
         "title": "Departures – Configure stop",
-        "description": "Enter the numeric SL site ID for the stop. {example}",
+        "description": "{example}",
         "data": {
+          "lookup_query": "Search for stop by name (optional)",
           "site_id": "Site ID",
-          "name": "Name (optional)"
+          "name": "Name (optional)",
+          "poll_interval": "Polling interval (minutes)"
         }
       },
       "deviations": {
         "title": "Deviations – Configure",
         "description": "{example}",
         "data": {
+          "lookup_query": "Search for stop by name (optional)",
           "site_id": "Site ID (optional – leave blank for all SL)",
-          "name": "Name (optional)"
+          "name": "Name (optional)",
+          "poll_interval": "Polling interval (minutes)"
+        }
+      },
+      "site_lookup": {
+        "title": "Stop lookup – Search results",
+        "description": "Type a stop name to search, then select from the results below.",
+        "data": {
+          "search_query": "Stop name to search",
+          "selected_site": "Select stop"
         }
       }
     },
     "error": {
       "invalid_stop": "Stop name must not be empty.",
-      "invalid_site_id": "Site ID must be a number (e.g. 9192 for Slussen)."
+      "invalid_site_id": "Site ID must be a number (e.g. 9192 for Slussen).",
+      "empty_search": "Please enter a stop name to search.",
+      "no_results": "No stops found for that query. Try a different name."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "SL Transport – Options",
+        "description": "Adjust settings for this integration entry.",
+        "data": {
+          "poll_interval": "Polling interval (minutes)"
+        }
+      }
     }
   }
 }

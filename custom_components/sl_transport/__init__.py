@@ -4,7 +4,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DOMAIN, DEFAULT_POLL
+from .const import CONF_POLL_INTERVAL, DEFAULT_POLL, DOMAIN
 from .coordinator import SLCoordinator
 
 PLATFORMS = ["sensor", "binary_sensor"]
@@ -12,7 +12,14 @@ PLATFORMS = ["sensor", "binary_sensor"]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     session = async_get_clientsession(hass)
-    interval = entry.options.get("poll_interval", DEFAULT_POLL)
+
+    # Options (set via the options flow) take priority over the value stored in
+    # data (set during initial config flow), which falls back to the default.
+    interval = entry.options.get(
+        CONF_POLL_INTERVAL,
+        entry.data.get(CONF_POLL_INTERVAL, DEFAULT_POLL),
+    )
+
     coord = SLCoordinator(
         hass,
         session,
@@ -25,7 +32,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coord
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    # Reload the entry when the user changes options (e.g. polling interval)
+    entry.async_on_unload(entry.add_update_listener(_async_reload_entry))
+
     return True
+
+
+async def _async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
