@@ -42,34 +42,39 @@ class SLTravelTimeSensor(BaseSLEntity, SensorEntity):
         }
 
 
-class SLDeparturesSensor(BaseSLEntity, SensorEntity):
-    def __init__(self, coordinator, entry):
+class SLLineDepartureSensor(BaseSLEntity, SensorEntity):
+    """Tracks next departures for a specific line + destination at a stop."""
+
+    def __init__(self, coordinator, entry, line: str, destination: str):
         super().__init__(coordinator, entry)
-        self._attr_name = entry.title
-        self._attr_unique_id = f"{DOMAIN}_{entry.entry_id}_departures"
+        self._line = line
+        self._destination = destination
+        safe_line = line.replace(" ", "_").lower()
+        safe_dest = destination.replace(" ", "_").lower()
+        self._attr_unique_id = f"{DOMAIN}_{entry.entry_id}_{safe_line}_{safe_dest}"
+        self._attr_name = f"{entry.title} {line} \u2192 {destination}"
+
+    def _matching_departures(self):
+        data = self.coordinator.data or {}
+        return [
+            dep for dep in data.get("departures", [])
+            if dep.get("line", {}).get("designation") == self._line
+            and dep.get("destination") == self._destination
+        ]
 
     @property
     def native_value(self):
-        data = self.coordinator.data or {}
-        line = data.get("line")
-        dest = data.get("dest")
-        display = data.get("display")
-        if not line and not dest:
-            return "No data"
-        parts = []
-        if line:
-            parts.append(line)
-        if dest:
-            parts.append(f"→ {dest}")
-        if display:
-            parts.append(f"({display})")
-        return " ".join(parts)
+        deps = self._matching_departures()
+        if not deps:
+            return None
+        next_dep = deps[0]
+        return next_dep.get("display") or next_dep.get("expected") or next_dep.get("scheduled")
 
     @property
     def extra_state_attributes(self):
         data = self.coordinator.data or {}
         upcoming = []
-        for dep in data.get("departures", []):
+        for dep in self._matching_departures():
             line_info = dep.get("line", {})
             upcoming.append(
                 {
@@ -94,22 +99,40 @@ class SLDeparturesSensor(BaseSLEntity, SensorEntity):
                     )
                     break
         return {
+            "line": self._line,
+            "destination": self._destination,
             "upcoming_departures": upcoming,
             "deviations": deviations,
             "deviation_count": data.get("deviation_count", 0),
         }
 
 
-SENSOR_TYPES = {
-    TYPE_TRAVEL_TIME: SLTravelTimeSensor,
-    TYPE_DEPARTURES: SLDeparturesSensor,
-}
-
-
 async def async_setup_entry(hass, entry, async_add_entities):
     entry_type = entry.data.get("type")
-    if entry_type not in SENSOR_TYPES:
-        return
     coord = hass.data[DOMAIN][entry.entry_id]
-    sensor_class = SENSOR_TYPES[entry_type]
-    async_add_entities([sensor_class(coord, entry)], True)
+
+    if entry_type == TYPE_TRAVEL_TIME:
+        async_add_entities([SLTravelTimeSensor(coord, entry)], True)
+
+    elif entry_type == TYPE_DEPARTURES:
+        known_keys: set = set()
+
+        def _discover_sensors():
+            data = coord.data or {}
+            new_sensors = []
+            for dep in data.get("departures", []):
+                line = dep.get("line", {}).get("designation")
+                dest = dep.get("destination")
+                if line and dest:
+                    key = (line, dest)
+                    if key not in known_keys:
+                        known_keys.add(key)
+                        new_sensors.append(SLLineDepartureSensor(coord, entry, line, dest))
+            if new_sensors:
+                async_add_entities(new_sensors)
+
+        # Discover from data already available after first_refresh in __init__.py
+        _discover_sensors()
+
+        # Re-run discovery on each coordinator update to catch any new line+destination combos
+        entry.async_on_unload(coord.async_add_listener(_discover_sensors))
