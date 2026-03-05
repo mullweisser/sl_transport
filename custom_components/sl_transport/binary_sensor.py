@@ -42,6 +42,11 @@ class SLDeviationsBinarySensor(CoordinatorEntity, BinarySensorEntity):
             else:
                 messages.append({"deviation_case_id": dev.get("deviation_case_id")})
         attrs["deviations"] = messages
+        # Expose each deviation as numbered flat attributes for dashboard card use
+        for i, msg in enumerate(messages, start=1):
+            attrs[f"deviation_{i}_header"] = msg.get("header")
+            attrs[f"deviation_{i}_details"] = msg.get("details")
+            attrs[f"deviation_{i}_scope_alias"] = msg.get("scope_alias")
         return attrs
 
     @property

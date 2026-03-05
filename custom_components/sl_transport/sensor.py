@@ -98,13 +98,18 @@ class SLLineDepartureSensor(BaseSLEntity, SensorEntity):
                         }
                     )
                     break
-        return {
+        attrs = {
             "line": self._line,
             "destination": self._destination,
             "upcoming_departures": upcoming,
             "deviations": deviations,
             "deviation_count": data.get("deviation_count", 0),
         }
+        # Expose each deviation as numbered flat attributes for dashboard card use
+        for i, dev in enumerate(deviations, start=1):
+            attrs[f"deviation_{i}_header"] = dev.get("header")
+            attrs[f"deviation_{i}_details"] = dev.get("details")
+        return attrs
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
