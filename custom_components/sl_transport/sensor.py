@@ -73,8 +73,9 @@ class SLLineDepartureSensor(BaseSLEntity, SensorEntity):
     @property
     def extra_state_attributes(self):
         data = self.coordinator.data or {}
+        deps = self._matching_departures()
         upcoming = []
-        for dep in self._matching_departures():
+        for dep in deps:
             line_info = dep.get("line", {})
             upcoming.append(
                 {
@@ -98,9 +99,16 @@ class SLLineDepartureSensor(BaseSLEntity, SensorEntity):
                         }
                     )
                     break
+        next_dep = deps[0] if deps else {}
+        next_line_info = next_dep.get("line", {})
         return {
             "line": self._line,
+            "transport_mode": next_line_info.get("transport_mode"),
             "destination": self._destination,
+            "expected": next_dep.get("expected"),
+            "scheduled": next_dep.get("scheduled"),
+            "display": next_dep.get("display"),
+            "state": next_dep.get("state"),
             "upcoming_departures": upcoming,
             "deviations": deviations,
             "deviation_count": data.get("deviation_count", 0),
