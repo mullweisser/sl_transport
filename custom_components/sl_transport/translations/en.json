@@ -1,0 +1,42 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "SL Transport – Choose type",
+        "description": "Select what you want to monitor.",
+        "data": {
+          "type": "Integration type"
+        }
+      },
+      "travel_time": {
+        "title": "Travel Time – Configure route",
+        "description": "Enter the names of the origin and destination stops. {example}",
+        "data": {
+          "origin": "Origin stop",
+          "destination": "Destination stop",
+          "name": "Name (optional)"
+        }
+      },
+      "departures": {
+        "title": "Departures – Configure stop",
+        "description": "Enter the numeric SL site ID for the stop. {example}",
+        "data": {
+          "site_id": "Site ID",
+          "name": "Name (optional)"
+        }
+      },
+      "deviations": {
+        "title": "Deviations – Configure",
+        "description": "{example}",
+        "data": {
+          "site_id": "Site ID (optional – leave blank for all SL)",
+          "name": "Name (optional)"
+        }
+      }
+    },
+    "error": {
+      "invalid_stop": "Stop name must not be empty.",
+      "invalid_site_id": "Site ID must be a number (e.g. 9192 for Slussen)."
+    }
+  }
+}

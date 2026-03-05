@@ -1,23 +1,24 @@
-import aiohttp
+from datetime import timedelta
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DOMAIN
+from .const import DOMAIN, DEFAULT_POLL
 from .coordinator import SLCoordinator
-from .sensor import SLTravelTimeSensor, SLDisruptionsSensor, SLDeparturesSensor
 
-PLATFORMS = ["sensor"]
+PLATFORMS = ["sensor", "binary_sensor"]
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     session = async_get_clientsession(hass)
-    interval = entry.options.get("poll_interval", 300)
+    interval = entry.options.get("poll_interval", DEFAULT_POLL)
     coord = SLCoordinator(
         hass,
         session,
         entry.data["type"],
         entry.data,
-        timedelta(seconds=interval)
+        timedelta(seconds=interval),
     )
     await coord.async_config_entry_first_refresh()
 
@@ -25,6 +26,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
+
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
