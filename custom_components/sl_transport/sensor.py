@@ -62,9 +62,21 @@ class SLLineDepartureSensor(BaseSLEntity, SensorEntity):
             and dep.get("destination") == self._destination
         ]
 
+    def _known_departures(self):
+        return [dep for dep in self._matching_departures() if dep.get("state") != "unknown"]
+
+    @property
+    def available(self):
+        if self.coordinator.data is None:
+            return False
+        all_deps = self._matching_departures()
+        if not all_deps:
+            return True
+        return bool(self._known_departures())
+
     @property
     def native_value(self):
-        deps = self._matching_departures()
+        deps = self._known_departures()
         if not deps:
             return None
         next_dep = deps[0]
