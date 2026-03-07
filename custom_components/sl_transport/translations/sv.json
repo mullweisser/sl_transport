@@ -1,0 +1,84 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "SL Transport – Välj typ",
+        "description": "Välj vad du vill övervaka.",
+        "data": {
+          "type": "Integrationstyp"
+        }
+      },
+      "travel_time": {
+        "title": "Restid – Konfigurera rutt",
+        "description": "Ange namn på start- och destinationshållplatser. T.ex. Slussen, Odenplan, T-Centralen.",
+        "data": {
+          "origin": "Starthållplats",
+          "destination": "Destinationshållplats",
+          "name": "Namn (valfritt)",
+          "poll_interval": "Uppdateringsintervall (minuter)"
+        }
+      },
+      "departures": {
+        "title": "Avgångar – Konfigurera hållplats",
+        "description": "Sök efter en hållplats med namn ovan, eller ange ett numeriskt plats-ID direkt (t.ex. 9192 för Slussen). Använd filterfälten för att begränsa resultaten.",
+        "data": {
+          "lookup_query": "Sök efter hållplats med namn (valfritt)",
+          "site_id": "Plats-ID",
+          "transport": "Transportläge (valfritt)",
+          "direction": "Riktningskod (valfritt)",
+          "line": "Linje-ID (valfritt)",
+          "forecast": "Prognosfönster (minuter)",
+          "name": "Namn (valfritt)",
+          "poll_interval": "Uppdateringsintervall (minuter)"
+        }
+      },
+      "deviations": {
+        "title": "Avvikelser – Konfigurera",
+        "description": "Lämna tomt för alla SL-avvikelser, eller sök/ange ett plats-ID för att filtrera till en specifik hållplats.",
+        "data": {
+          "lookup_query": "Sök efter hållplats med namn (valfritt)",
+          "site_id": "Plats-ID (valfritt – lämna tomt för alla SL)",
+          "name": "Namn (valfritt)",
+          "poll_interval": "Uppdateringsintervall (minuter)"
+        }
+      },
+      "site_lookup": {
+        "title": "Hållplatssökning – Sökresultat",
+        "description": "Ange ett hållplatsnamn för att söka, välj sedan från resultaten nedan.",
+        "data": {
+          "search_query": "Hållplatsnamn att söka",
+          "selected_site": "Välj hållplats"
+        }
+      }
+    },
+    "error": {
+      "invalid_stop": "Hållplatsnamn får inte vara tomt.",
+      "invalid_site_id": "Plats-ID måste vara ett nummer (t.ex. 9192 för Slussen).",
+      "invalid_integer": "Värdet måste vara ett heltal.",
+      "empty_search": "Ange ett hållplatsnamn att söka efter.",
+      "no_results": "Inga hållplatser hittades för den sökningen. Prova ett annat namn."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "SL Transport – Inställningar",
+        "description": "Justera inställningar för denna integrationspost.",
+        "data": {
+          "poll_interval": "Uppdateringsintervall (minuter)",
+          "transport": "Transportläge (valfritt)",
+          "direction": "Riktningskod (valfritt)",
+          "line": "Linje-ID (valfritt)",
+          "forecast": "Prognosfönster (minuter)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "line_departure": {
+        "name": "Linje {line} mot {destination}"
+      }
+    }
+  }
+}

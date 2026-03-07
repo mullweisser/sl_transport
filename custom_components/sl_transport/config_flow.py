@@ -344,31 +344,68 @@ class SLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class SLOptionsFlowHandler(config_entries.OptionsFlow):
-    """Allow users to change the polling interval after initial setup."""
+    """Allow users to change settings after initial setup."""
 
     def __init__(self, config_entry) -> None:
         self._config_entry = config_entry
 
+    def _current(self, key, default=None):
+        """Return the current value for a key, checking options then data."""
+        return self._config_entry.options.get(
+            key, self._config_entry.data.get(key, default)
+        )
+
     async def async_step_init(self, user_input=None):
+        is_departures = self._config_entry.data.get(CONF_TYPE) == TYPE_DEPARTURES
+
         if user_input is not None:
             poll_minutes = int(user_input.get(CONF_POLL_INTERVAL, DEFAULT_POLL_MINUTES))
-            return self.async_create_entry(
-                title="",
-                data={CONF_POLL_INTERVAL: poll_minutes * 60},
-            )
+            options = {CONF_POLL_INTERVAL: poll_minutes * 60}
 
-        # Determine current interval in minutes to pre-fill the field
-        current_seconds = self._config_entry.options.get(
-            CONF_POLL_INTERVAL,
-            self._config_entry.data.get(CONF_POLL_INTERVAL, DEFAULT_POLL),
-        )
+            if is_departures:
+                transport = user_input.get(CONF_TRANSPORT, "")
+                if transport:
+                    options[CONF_TRANSPORT] = transport
+
+                direction = user_input.get(CONF_DIRECTION)
+                if direction is not None:
+                    try:
+                        options[CONF_DIRECTION] = int(direction)
+                    except (ValueError, TypeError):
+                        pass
+
+                line = user_input.get(CONF_LINE)
+                if line is not None:
+                    try:
+                        options[CONF_LINE] = int(line)
+                    except (ValueError, TypeError):
+                        pass
+
+                try:
+                    options[CONF_FORECAST] = int(user_input.get(CONF_FORECAST, DEFAULT_FORECAST))
+                except (ValueError, TypeError):
+                    options[CONF_FORECAST] = DEFAULT_FORECAST
+
+            return self.async_create_entry(title="", data=options)
+
+        # Pre-fill current values
+        current_seconds = self._current(CONF_POLL_INTERVAL, DEFAULT_POLL)
         current_minutes = max(1, current_seconds // 60)
+
+        fields = {
+            vol.Optional(CONF_POLL_INTERVAL, default=current_minutes): _poll_interval_schema(),
+        }
+
+        if is_departures:
+            transport_options = [""] + TRANSPORT_MODES
+            fields[vol.Optional(CONF_TRANSPORT, default=self._current(CONF_TRANSPORT, ""))] = vol.In(transport_options)
+            current_direction = self._current(CONF_DIRECTION)
+            fields[vol.Optional(CONF_DIRECTION, default=current_direction)] = vol.Any(None, vol.Coerce(int))
+            current_line = self._current(CONF_LINE)
+            fields[vol.Optional(CONF_LINE, default=current_line)] = vol.Any(None, vol.Coerce(int))
+            fields[vol.Optional(CONF_FORECAST, default=self._current(CONF_FORECAST, DEFAULT_FORECAST))] = vol.All(vol.Coerce(int), vol.Range(min=1))
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(
-                {
-                    vol.Optional(CONF_POLL_INTERVAL, default=current_minutes): _poll_interval_schema(),
-                }
-            ),
+            data_schema=vol.Schema(fields),
         )
