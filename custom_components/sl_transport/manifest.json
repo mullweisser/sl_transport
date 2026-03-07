@@ -1,6 +1,6 @@
 {
   "domain": "sl_transport",
-  "name": "SL Transport (Stockholm Public Transport)",
+  "name": "SL Transport (Storstockholms Lokaltrafik)",
   "version": "0.2.3",
   "documentation": "https://github.com/mullweisser/sl_transport",
   "dependencies": [],

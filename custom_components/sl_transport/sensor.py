@@ -14,7 +14,7 @@ class BaseSLEntity(CoordinatorEntity):
         return {
             "identifiers": {(DOMAIN, self.config_entry.entry_id)},
             "name": self.config_entry.title,
-            "manufacturer": "SL / Trafiklab",
+            "manufacturer": "Storstockholms Lokaltrafik (SL) / SL Transport",
         }
 
 
