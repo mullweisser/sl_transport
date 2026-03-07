@@ -124,7 +124,6 @@ class SLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="travel_time",
             data_schema=schema,
             errors=errors,
-            description_placeholders={"example": "e.g. Slussen, Odenplan, T-Centralen"},
         )
 
     # ------------------------------------------------------------------
@@ -173,12 +172,6 @@ class SLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="departures",
             data_schema=schema,
             errors=errors,
-            description_placeholders={
-                "example": (
-                    "Search for a stop by name above, or enter a numeric site ID directly "
-                    "(e.g. 9192 for Slussen)."
-                )
-            },
         )
 
     # ------------------------------------------------------------------
@@ -228,12 +221,6 @@ class SLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="deviations",
             data_schema=schema,
             errors=errors,
-            description_placeholders={
-                "example": (
-                    "Leave blank for all SL deviations, or search/enter a site ID to filter "
-                    "to a specific stop."
-                )
-            },
         )
 
     # ------------------------------------------------------------------
