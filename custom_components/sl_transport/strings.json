@@ -65,7 +65,11 @@
         "title": "SL Transport – Options",
         "description": "Adjust settings for this integration entry.",
         "data": {
-          "poll_interval": "Polling interval (minutes)"
+          "poll_interval": "Polling interval (minutes)",
+          "transport": "Transport mode (optional)",
+          "direction": "Direction code (optional)",
+          "line": "Line ID (optional)",
+          "forecast": "Forecast window (minutes)"
         }
       }
     }

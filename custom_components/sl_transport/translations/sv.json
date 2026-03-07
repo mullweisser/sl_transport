@@ -65,7 +65,11 @@
         "title": "SL Transport – Inställningar",
         "description": "Justera inställningar för denna integrationspost.",
         "data": {
-          "poll_interval": "Uppdateringsintervall (minuter)"
+          "poll_interval": "Uppdateringsintervall (minuter)",
+          "transport": "Transportläge (valfritt)",
+          "direction": "Riktningskod (valfritt)",
+          "line": "Linje-ID (valfritt)",
+          "forecast": "Prognosfönster (minuter)"
         }
       }
     }
