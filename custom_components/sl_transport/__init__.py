@@ -20,11 +20,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry.data.get(CONF_POLL_INTERVAL, DEFAULT_POLL),
     )
 
+    # Merge options over data so that values changed via the options flow
+    # (e.g. transport filter, forecast window) are picked up on reload.
+    config_data = {**entry.data, **entry.options}
+
     coord = SLCoordinator(
         hass,
         session,
         entry.data["type"],
-        entry.data,
+        config_data,
         timedelta(seconds=interval),
     )
     await coord.async_config_entry_first_refresh()
