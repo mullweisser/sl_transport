@@ -45,6 +45,9 @@ class SLTravelTimeSensor(BaseSLEntity, SensorEntity):
 class SLLineDepartureSensor(BaseSLEntity, SensorEntity):
     """Tracks next departures for a specific line + destination at a stop."""
 
+    _attr_has_entity_name = True
+    _attr_translation_key = "line_departure"
+
     def __init__(self, coordinator, entry, line: str, destination: str):
         super().__init__(coordinator, entry)
         self._line = line
@@ -52,7 +55,7 @@ class SLLineDepartureSensor(BaseSLEntity, SensorEntity):
         safe_line = line.replace(" ", "_").lower()
         safe_dest = destination.replace(" ", "_").lower()
         self._attr_unique_id = f"{DOMAIN}_{entry.entry_id}_{safe_line}_{safe_dest}"
-        self._attr_name = f"{entry.title} {line} \u2192 {destination}"
+        self._attr_translation_placeholders = {"line": line, "destination": destination}
 
     def _matching_departures(self):
         data = self.coordinator.data or {}

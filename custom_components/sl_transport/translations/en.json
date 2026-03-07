@@ -10,7 +10,7 @@
       },
       "travel_time": {
         "title": "Travel Time – Configure route",
-        "description": "Enter the names of the origin and destination stops. {example}",
+        "description": "Enter the names of the origin and destination stops. E.g. Slussen, Odenplan, T-Centralen.",
         "data": {
           "origin": "Origin stop",
           "destination": "Destination stop",
@@ -20,7 +20,7 @@
       },
       "departures": {
         "title": "Departures – Configure stop",
-        "description": "{example}",
+        "description": "Search for a stop by name above, or enter a numeric site ID directly (e.g. 9192 for Slussen).",
         "data": {
           "lookup_query": "Search for stop by name (optional)",
           "site_id": "Site ID",
@@ -30,7 +30,7 @@
       },
       "deviations": {
         "title": "Deviations – Configure",
-        "description": "{example}",
+        "description": "Leave blank for all SL deviations, or search/enter a site ID to filter to a specific stop.",
         "data": {
           "lookup_query": "Search for stop by name (optional)",
           "site_id": "Site ID (optional – leave blank for all SL)",
@@ -62,6 +62,13 @@
         "data": {
           "poll_interval": "Polling interval (minutes)"
         }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "line_departure": {
+        "name": "Line {line} towards {destination}"
       }
     }
   }
