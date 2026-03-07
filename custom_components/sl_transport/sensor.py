@@ -1,7 +1,7 @@
 from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, TYPE_TRAVEL_TIME, TYPE_DEPARTURES
+from .const import DOMAIN, TYPE_TRAVEL_TIME, TYPE_DEPARTURES, TRANSPORT_MODE_ICONS
 
 
 class BaseSLEntity(CoordinatorEntity):
@@ -61,6 +61,14 @@ class SLLineDepartureSensor(BaseSLEntity, SensorEntity):
             if dep.get("line", {}).get("designation") == self._line
             and dep.get("destination") == self._destination
         ]
+
+    @property
+    def icon(self):
+        deps = self._matching_departures()
+        if deps:
+            mode = deps[0].get("line", {}).get("transport_mode", "").upper()
+            return TRANSPORT_MODE_ICONS.get(mode, "mdi:bus")
+        return "mdi:bus"
 
     @property
     def native_value(self):
