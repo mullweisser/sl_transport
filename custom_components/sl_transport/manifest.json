@@ -1,7 +1,7 @@
 {
   "domain": "sl_transport",
   "name": "SL Transport",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "documentation": "https://github.com/mullweisser/sl_transport",
   "dependencies": [],
   "codeowners": ["@mullweisser"],
