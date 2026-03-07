@@ -9,13 +9,20 @@ import voluptuous as vol
 
 from .const import (
     CONF_DESTINATION,
+    CONF_DIRECTION,
+    CONF_FORECAST,
+    CONF_LINE,
     CONF_ORIGIN,
     CONF_POLL_INTERVAL,
     CONF_SITE_ID,
+    CONF_TRANSPORT,
     CONF_TYPE,
+    DEFAULT_FORECAST,
     DEFAULT_POLL,
     DEFAULT_POLL_MINUTES,
     DOMAIN,
+    MAX_FORECAST,
+    TRANSPORT_MODES,
     TYPE_DEPARTURES,
     TYPE_DISRUPTIONS,
     TYPE_TRAVEL_TIME,
@@ -403,7 +410,7 @@ class SLOptionsFlowHandler(config_entries.OptionsFlow):
             fields[vol.Optional(CONF_DIRECTION, default=current_direction)] = vol.Any(None, vol.Coerce(int))
             current_line = self._current(CONF_LINE)
             fields[vol.Optional(CONF_LINE, default=current_line)] = vol.Any(None, vol.Coerce(int))
-            fields[vol.Optional(CONF_FORECAST, default=self._current(CONF_FORECAST, DEFAULT_FORECAST))] = vol.All(vol.Coerce(int), vol.Range(min=1))
+            fields[vol.Optional(CONF_FORECAST, default=self._current(CONF_FORECAST, DEFAULT_FORECAST))] = vol.All(vol.Coerce(int), vol.Range(min=1, max=MAX_FORECAST))
 
         return self.async_show_form(
             step_id="init",

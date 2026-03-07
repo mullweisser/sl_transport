@@ -2,9 +2,10 @@ import aiohttp
 import logging
 from datetime import datetime, timezone
 from datetime import timedelta
+from urllib.parse import urlencode
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import DOMAIN, TYPE_TRAVEL_TIME, TYPE_DISRUPTIONS, TYPE_DEPARTURES
+from .const import CONF_DIRECTION, CONF_FORECAST, CONF_LINE, CONF_TRANSPORT, DEFAULT_FORECAST, DOMAIN, TYPE_TRAVEL_TIME, TYPE_DISRUPTIONS, TYPE_DEPARTURES
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -86,7 +87,19 @@ class SLCoordinator(DataUpdateCoordinator):
 
     async def _fetch_departures(self):
         site_id = self.config_data["site_id"]
-        url = f"https://transport.integration.sl.se/v1/sites/{site_id}/departures"
+        base_url = f"https://transport.integration.sl.se/v1/sites/{site_id}/departures"
+        query = {}
+        transport = self.config_data.get(CONF_TRANSPORT)
+        if transport:
+            query["transport"] = transport
+        direction = self.config_data.get(CONF_DIRECTION)
+        if direction is not None:
+            query["direction"] = direction
+        line = self.config_data.get(CONF_LINE)
+        if line is not None:
+            query["line"] = line
+        query["forecast"] = self.config_data.get(CONF_FORECAST, DEFAULT_FORECAST)
+        url = f"{base_url}?{urlencode(query)}"
         async with self.session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as resp:
             if resp.status != 200:
                 raise Exception(f"HTTP {resp.status}")

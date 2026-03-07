@@ -7,6 +7,17 @@ CONF_SITE_ID = "site_id"
 CONF_MODES = "modes"          # list e.g. [1,2,4] metro/bus/train
 CONF_POLL_INTERVAL = "poll_interval"
 
+# Departure filter parameters
+CONF_TRANSPORT = "transport"
+CONF_DIRECTION = "direction"
+CONF_LINE = "line"
+CONF_FORECAST = "forecast"
+
+DEFAULT_FORECAST = 60  # minutes
+MAX_FORECAST = 12000   # minutes (API maximum)
+
+TRANSPORT_MODES = ["BUS", "TRAM", "METRO", "TRAIN", "FERRY", "SHIP", "TAXI"]
+
 TYPE_TRAVEL_TIME = "travel_time"
 TYPE_DISRUPTIONS = "disruptions"
 TYPE_DEPARTURES = "departures"
