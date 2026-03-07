@@ -9,19 +9,13 @@ import voluptuous as vol
 
 from .const import (
     CONF_DESTINATION,
-    CONF_DIRECTION,
-    CONF_FORECAST,
-    CONF_LINE,
     CONF_ORIGIN,
     CONF_POLL_INTERVAL,
     CONF_SITE_ID,
-    CONF_TRANSPORT,
     CONF_TYPE,
-    DEFAULT_FORECAST,
     DEFAULT_POLL,
     DEFAULT_POLL_MINUTES,
     DOMAIN,
-    TRANSPORT_MODES,
     TYPE_DEPARTURES,
     TYPE_DISRUPTIONS,
     TYPE_TRAVEL_TIME,
@@ -154,57 +148,22 @@ class SLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             elif not site_id.isdigit():
                 errors[CONF_SITE_ID] = "invalid_site_id"
 
-            direction = user_input.get(CONF_DIRECTION)
-            line = user_input.get(CONF_LINE)
-            forecast = user_input.get(CONF_FORECAST, DEFAULT_FORECAST)
-
-            if direction is not None:
-                try:
-                    direction = int(direction)
-                except (ValueError, TypeError):
-                    errors[CONF_DIRECTION] = "invalid_integer"
-                    direction = None
-
-            if line is not None:
-                try:
-                    line = int(line)
-                except (ValueError, TypeError):
-                    errors[CONF_LINE] = "invalid_integer"
-                    line = None
-
-            try:
-                forecast = int(forecast)
-            except (ValueError, TypeError):
-                errors[CONF_FORECAST] = "invalid_integer"
-                forecast = DEFAULT_FORECAST
-
             if not errors:
                 poll_minutes = int(user_input.get(CONF_POLL_INTERVAL, DEFAULT_POLL_MINUTES))
                 title = user_input.get("name") or f"Departures – site {site_id}"
-                entry_data = {
-                    CONF_TYPE: TYPE_DEPARTURES,
-                    CONF_SITE_ID: site_id,
-                    CONF_POLL_INTERVAL: poll_minutes * 60,
-                    CONF_FORECAST: forecast,
-                }
-                transport = user_input.get(CONF_TRANSPORT)
-                if transport:
-                    entry_data[CONF_TRANSPORT] = transport
-                if direction is not None:
-                    entry_data[CONF_DIRECTION] = direction
-                if line is not None:
-                    entry_data[CONF_LINE] = line
-                return self.async_create_entry(title=title, data=entry_data)
+                return self.async_create_entry(
+                    title=title,
+                    data={
+                        CONF_TYPE: TYPE_DEPARTURES,
+                        CONF_SITE_ID: site_id,
+                        CONF_POLL_INTERVAL: poll_minutes * 60,
+                    },
+                )
 
-        transport_options = [""] + TRANSPORT_MODES
         schema = vol.Schema(
             {
                 vol.Optional("lookup_query"): str,
                 vol.Optional(CONF_SITE_ID, default=prefill): str,
-                vol.Optional(CONF_TRANSPORT, default=""): vol.In(transport_options),
-                vol.Optional(CONF_DIRECTION): vol.Any(None, vol.Coerce(int)),
-                vol.Optional(CONF_LINE): vol.Any(None, vol.Coerce(int)),
-                vol.Optional(CONF_FORECAST, default=DEFAULT_FORECAST): vol.All(vol.Coerce(int), vol.Range(min=1)),
                 vol.Optional("name"): str,
                 vol.Optional(CONF_POLL_INTERVAL, default=DEFAULT_POLL_MINUTES): _poll_interval_schema(),
             }

@@ -20,14 +20,10 @@
       },
       "departures": {
         "title": "Avgångar – Konfigurera hållplats",
-        "description": "Sök efter en hållplats med namn ovan, eller ange ett numeriskt plats-ID direkt (t.ex. 9192 för Slussen). Använd filterfälten för att begränsa resultaten.",
+        "description": "Sök efter en hållplats med namn ovan, eller ange ett numeriskt plats-ID direkt (t.ex. 9192 för Slussen).",
         "data": {
           "lookup_query": "Sök efter hållplats med namn (valfritt)",
           "site_id": "Plats-ID",
-          "transport": "Transportläge (valfritt)",
-          "direction": "Riktningskod (valfritt)",
-          "line": "Linje-ID (valfritt)",
-          "forecast": "Prognosfönster (minuter)",
           "name": "Namn (valfritt)",
           "poll_interval": "Uppdateringsintervall (minuter)"
         }
@@ -54,7 +50,6 @@
     "error": {
       "invalid_stop": "Hållplatsnamn får inte vara tomt.",
       "invalid_site_id": "Plats-ID måste vara ett nummer (t.ex. 9192 för Slussen).",
-      "invalid_integer": "Värdet måste vara ett heltal.",
       "empty_search": "Ange ett hållplatsnamn att söka efter.",
       "no_results": "Inga hållplatser hittades för den sökningen. Prova ett annat namn."
     }

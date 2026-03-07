@@ -20,14 +20,10 @@
       },
       "departures": {
         "title": "Departures – Configure stop",
-        "description": "Search for a stop by name above, or enter a numeric site ID directly (e.g. 9192 for Slussen). Use the filter fields to narrow down results.",
+        "description": "Search for a stop by name above, or enter a numeric site ID directly (e.g. 9192 for Slussen).",
         "data": {
           "lookup_query": "Search for stop by name (optional)",
           "site_id": "Site ID",
-          "transport": "Transport mode (optional)",
-          "direction": "Direction code (optional)",
-          "line": "Line ID (optional)",
-          "forecast": "Forecast window (minutes)",
           "name": "Name (optional)",
           "poll_interval": "Polling interval (minutes)"
         }
@@ -54,7 +50,6 @@
     "error": {
       "invalid_stop": "Stop name must not be empty.",
       "invalid_site_id": "Site ID must be a number (e.g. 9192 for Slussen).",
-      "invalid_integer": "Value must be a whole number.",
       "empty_search": "Please enter a stop name to search.",
       "no_results": "No stops found for that query. Try a different name."
     }
