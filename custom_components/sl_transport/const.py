@@ -13,3 +13,13 @@ TYPE_DEPARTURES = "departures"
 
 DEFAULT_POLL = 60            # 1 minute in seconds
 DEFAULT_POLL_MINUTES = 1    # default shown in config forms
+
+TRANSPORT_MODE_ICONS = {
+    "BUS": "mdi:bus",
+    "TRAM": "mdi:tram",
+    "METRO": "mdi:subway",
+    "TRAIN": "mdi:train",
+    "FERRY": "mdi:ferry",
+    "SHIP": "mdi:ship-wheel",
+    "TAXI": "mdi:taxi",
+}
